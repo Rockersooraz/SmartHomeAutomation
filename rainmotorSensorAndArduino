@@ -1,0 +1,73 @@
+int waterReader = A0;
+int MOTOR_LEFT = 5;
+int MOTOR_RIGHT = 6;
+boolean rain = false;
+
+void setup() {
+  // put your setup code here, to run once:
+  Serial.begin(9600);
+  pinMode(waterReader,INPUT);
+  pinMode(MOTOR_LEFT,OUTPUT);
+  pinMode(MOTOR_RIGHT,OUTPUT);
+} 
+
+
+void loop() {
+  // put your main code here, to run repeatedly:
+  
+  int sensorReading = analogRead(A0);   
+  Serial.println(sensorReading);
+  if(sensorReading < 650)
+  {
+     if(rain == true)
+     {
+        stopMotor();
+        Serial.println(rain);
+     }
+     else
+     {
+       runMotor();
+       delay(2600);
+       stopMotor();
+       rain = true;
+     }
+  }
+  else
+  {
+      if(rain == true)
+      {
+         reverseMotor();
+         delay(2600);
+         stopMotor();
+         rain = false;
+      }
+      else
+      {
+        stopMotor();
+      }
+      
+  }
+
+}
+
+
+void stopMotor(){
+      digitalWrite(MOTOR_LEFT, LOW);
+      digitalWrite(MOTOR_RIGHT, LOW);
+  }
+
+void reverseMotor(){
+      digitalWrite(MOTOR_LEFT, HIGH);
+      digitalWrite(MOTOR_RIGHT, LOW);
+  }
+
+void runMotor(){
+      digitalWrite(MOTOR_LEFT, LOW);
+      digitalWrite(MOTOR_RIGHT, HIGH);
+  }
+
+void middleSpeed()
+{
+      analogWrite(MOTOR_LEFT,125);
+      analogWrite(MOTOR_RIGHT,0);
+}
