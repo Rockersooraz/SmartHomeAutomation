@@ -1,0 +1,59 @@
+#include <SoftwareSerial.h>
+#include <ESP8266WiFi.h>
+#include <ESP8266WebServer.h>
+#include <ESP8266HTTPClient.h>
+SoftwareSerial s(D6,D5);
+const char* ssid = "Suraj_Adhikari";
+const char* password = "P@ssw0rd";
+int data;
+
+
+void setup() 
+{
+s.begin(9600);
+Serial.begin(9600);
+WiFi.begin(ssid, password);
+}
+ 
+void loop() {
+
+ while (WiFi.status() != WL_CONNECTED)
+  {       
+      delay(3000);
+      Serial.print("Connecting..");
+  }
+   if(WiFi.status() == WL_CONNECTED)
+   {
+      Serial.print("connected");
+      Serial.println(WiFi.localIP());  
+   }
+  
+  s.write("s");
+ if (s.available()>0)
+  {
+     data=s.read();
+   Serial.println(data);
+
+    HTTPClient http;
+       http.begin("http://192.168.0.122:8080/earthquakeDetected"); // Send Request to webserver
+       int httpcode=http.GET();                                             // Http REquest Code 
+       
+       Serial.println("------------------------Earthquake ALERT ---------------------------------");
+       Serial.println("This is HTTPcode:");
+       Serial.println(httpcode);
+       String payload=http.getString();     // Get the response
+       Serial.println("This is Payload:");
+       Serial.println(payload);
+       Serial.println("------------------------Earthquake ALERT ---------------------------------");
+       http.end();
+
+   
+  
+    
+  }  
+      }
+ 
+  
+
+ 
+ 
